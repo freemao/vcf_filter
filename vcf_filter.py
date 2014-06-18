@@ -18,7 +18,7 @@ optparser.add_option('-d', '--depth', dest = 'depth',
                      help = 'the depth cutoff')
 options, args = optparser.parse_args()
 
-def FBfilter(qual, depth, vcfnamelist, type = 'snp'):
+def FBfilter(qual, depth, vcfnamelist):
     '''This function is designed for filtering vcf files generwted by freebayes.'''
     for fn in vcfnamelist:
         filteredname = '.'.join(fn.split('.')[0:-1]) + '.filtered.vcf'
@@ -29,9 +29,11 @@ def FBfilter(qual, depth, vcfnamelist, type = 'snp'):
                 f1.write(i)
             else:
                 j = i.split()
-                if (float(j[5]) > qual
-                    and j[7].split(';')[-2].split('=')[-1] == type
-                    and int(j[9].split(':')[1]) > depth) :
+                ref = j[3]
+                alt = j[4]
+                if (float(j[5]) > float(qual)
+                    and  len(ref) == 1 and len(alt) == 1
+                    and int(j[9].split(':')[1]) > int(depth)) :
                     f1.write(i)
         f0.close()
         f1.close()
@@ -50,8 +52,8 @@ def GATKfilter(qual, depth, vcfnamelist):
                 ref = j[3]
                 alt = j[4]
                 info = j[8].split(':')
-                if (float(j[5]) > qual and len(ref) == 1 and len(alt) == 1
-                    and len(info) == 5 and int(j[9].split(':')[2]) > depth):
+                if (float(j[5]) > float(qual) and len(ref) == 1 and len(alt) == 1
+                    and len(info) == 5 and int(j[9].split(':')[2]) > int(depth)):
                     f1.write(i)
         f0.close()
         f1.close()
@@ -72,8 +74,8 @@ samtools and bcftools.
                 ref = j[3]
                 alt = j[4]
                 info = j[8].split(':')
-                if (float(j[5]) > qual and len(ref) ==1 and len(alt) == 1
-                    and int(j[9].split(':')[2]) > depth):
+                if (float(j[5]) > float(qual) and len(ref) ==1 and len(alt) == 1
+                    and int(j[9].split(':')[2]) > int(depth)):
                     f1.write(i)
         f0.close()
         f1.close()
