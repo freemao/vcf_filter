@@ -32,11 +32,12 @@ p2_name, p2_genotype, p2_dp, p2_ratio, outputfile):
     rf_w = vcf.Writer(rf, myvcf)
     for i in myvcf:
         if i.is_snp:
+            print i.POS
             f1gt = i.genotype(f1_name)['GT']
             f1dp = i.genotype(f1_name)['DP']
             f1ro = i.genotype(f1_name)['RO']
             f1ao = i.genotype(f1_name)['AO']
-            if f1gt and f1ao+f1ro != 0:
+            if f1gt and type(f1ao) is int and f1ao+f1ro != 0:
                 f1ratio = min(f1ro, f1ao)/float(f1ao+f1ro)
 # return str, int, int, int, float
 
@@ -44,19 +45,19 @@ p2_name, p2_genotype, p2_dp, p2_ratio, outputfile):
             p1dp = i.genotype(p1_name)['DP']
             p1ro = i.genotype(p1_name)['RO']
             p1ao = i.genotype(p1_name)['AO']
-            if p1gt and p1ao+p1ro != 0:
+            if p1gt and type(p1ao) is int and p1ao+p1ro != 0:
                 p1ratio = min(p1ro, p1ao)/float(p1ao+p1ro)
-
+# if type is ins,ins will return a list [int, int] not int
             p2gt = i.genotype(p2_name)['GT']
             p2dp = i.genotype(p2_name)['DP']
             p2ro = i.genotype(p2_name)['RO']
             p2ao = i.genotype(p2_name)['AO']
-            if p2gt and p2ao+p2ro != 0:
+            if p2gt and type(p2ao) is int and p2ao+p2ro != 0:
                 p2ratio = min(p2ro, p2ao)/float(p2ao+p2ro)
 
-            if (f1gt and f1ao+f1ro != 0
-               and p1gt and p1ao+p1ro != 0
-               and p2gt and p2ao+p2ro != 0
+            if (f1gt and type(f1ao) is int and f1ao+f1ro != 0
+               and p1gt and type(p1ao) is int and p1ao+p1ro != 0
+               and p2gt and type(p2ao) is int and p2ao+p2ro != 0
                and f1gt == f1_genotype and f1dp >= f1_dp and f1ratio > f1_ratio
                and p1gt == p1_genotype and p1dp >= p1_dp and p1ratio < p1_ratio
                and p2gt == p2_genotype and p2dp >= p2_dp and p2ratio < p2_ratio):
